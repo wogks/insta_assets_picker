@@ -53,6 +53,7 @@ class InstaAssetPickerConfig {
     /// [InstaAssetPickerBuilder] config
 
     this.title,
+    this.tabBarSelector,
     this.cropDelegate = const InstaAssetCropDelegate(),
     this.closeOnComplete = false,
     this.skipCropOnComplete = false,
@@ -109,7 +110,9 @@ class InstaAssetPickerConfig {
   /* [InstaAssetPickerBuilder] config */
 
   /// Specifies the text title in the picker [AppBar].
-  final String? title;
+  final Widget? title;
+
+  final Widget? tabBarSelector;
 
   /// Customize the display and export options of crops
   final InstaAssetCropDelegate cropDelegate;

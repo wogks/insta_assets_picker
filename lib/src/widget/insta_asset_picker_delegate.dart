@@ -22,7 +22,7 @@ const _kScrollMultiplier = 1.5;
 
 const _kIndicatorSize = 20.0;
 const _kPathSelectorRowHeight = 50.0;
-const _kActionsPadding = EdgeInsets.symmetric(horizontal: 8, vertical: 8);
+const _kActionsPadding = EdgeInsets.symmetric(horizontal: 8, vertical: 10);
 
 typedef InstaPickerActionsBuilder = List<Widget> Function(
   BuildContext context,
@@ -42,6 +42,7 @@ class InstaAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
   })  : _cropController =
             InstaAssetsCropController(keepScrollOffset, config.cropDelegate),
         title = config.title,
+        tabBarSelector = config.tabBarSelector,
         closeOnComplete = config.closeOnComplete,
         skipCropOnComplete = config.skipCropOnComplete,
         actionsBuilder = config.actionsBuilder,
@@ -64,7 +65,10 @@ class InstaAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
         );
 
   /// The text title in the picker [AppBar].
-  final String? title;
+  /// 재한 custom
+  final Widget? title;
+
+  final Widget? tabBarSelector;
 
   /// Callback called when the assets selection is confirmed.
   /// It will as argument a [Stream] with exportation details [InstaAssetsExportDetails].
@@ -329,7 +333,7 @@ class InstaAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
                         : pathNameBuilder?.call(p.path) ?? p.path.name,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      // fontWeight: FontWeight.bold,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -372,26 +376,36 @@ class InstaAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
       width: MediaQuery.of(context).size.width,
       child: Padding(
         // decrease left padding because the path selector button has a padding
-        padding: _kActionsPadding.copyWith(left: _kActionsPadding.left - 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        padding: _kActionsPadding.copyWith(
+            // left: _kActionsPadding.left - 4,
+            ),
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            pathEntitySelector(context),
-            actionsBuilder != null
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: actionsBuilder!(
-                      context,
-                      theme,
-                      height,
-                      unSelectAll,
+            // 중앙 정렬된 tabBarSelector
+            tabBarSelector != null
+                ? Center(child: tabBarSelector!)
+                : SizedBox(),
+
+            // 오른쪽 정렬된 actions
+            Positioned(
+              right: 0,
+              child: actionsBuilder != null
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: actionsBuilder!(
+                        context,
+                        theme,
+                        height,
+                        unSelectAll,
+                      ),
+                    )
+                  : InstaPickerCircleIconButton.unselectAll(
+                      onTap: unSelectAll,
+                      theme: theme,
+                      size: height,
                     ),
-                  )
-                : InstaPickerCircleIconButton.unselectAll(
-                    onTap: unSelectAll,
-                    theme: theme,
-                    size: height,
-                  ),
+            ),
           ],
         ),
       ),
@@ -510,12 +524,7 @@ class InstaAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
                     child: AssetPickerAppBarWrapper(
                       appBar: AssetPickerAppBar(
                         backgroundColor: theme.appBarTheme.backgroundColor,
-                        title: title != null
-                            ? Text(
-                                title!,
-                                style: theme.appBarTheme.titleTextStyle,
-                              )
-                            : null,
+                        title: pathEntitySelector(context),
                         leading: backButton(context),
                         actions: <Widget>[confirmButton(context)],
                       ),
