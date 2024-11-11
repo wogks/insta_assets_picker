@@ -333,6 +333,7 @@ class InstaAssetPickerBuilder extends DefaultAssetPickerBuilderDelegate {
                         : pathNameBuilder?.call(p.path) ?? p.path.name,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: 16,
+                      color: Colors.black,
                       // fontWeight: FontWeight.bold,
                     ),
                     maxLines: 1,
